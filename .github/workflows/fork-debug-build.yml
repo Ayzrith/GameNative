@@ -17,6 +17,12 @@ jobs:
           distribution: 'temurin'
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
+      - name: Inject dummy credentials
+        run: |
+          cat <<EOF > local.properties
+          POSTHOG_API_KEY=dummy
+          POSTHOG_HOST=https://us.i.posthog.com
+          EOF
       - name: Assemble legacy debug APK
         run: ./gradlew :app:assembleLegacyDebug --stacktrace
       - name: Upload debug APK
