@@ -307,10 +307,10 @@ public class WinHandler {
             return false;
         }
         ControlsProfile profile = inputControlsView.getProfile();
+        // shortcut: PhonePad overlay GONE iken de sanal pad aktif sayılır (stokta
+        // görünürlük koşulu vardı; eski overlay artık çizilmiyor ama köprü yaşıyor).
         return profile != null
-                && profile.isVirtualGamepad()
-                && inputControlsView.isShowTouchscreenControls()
-                && inputControlsView.getVisibility() == View.VISIBLE;
+                && profile.isVirtualGamepad();
     }
 
     private void clearGamepadSlot(int slot) {

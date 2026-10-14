@@ -633,6 +633,8 @@ fun XServerScreen(
     }
     var isKeyboardVisible = false
     var areControlsVisible by remember { mutableStateOf(false) }
+    // shortcut: sanal pad = PhoneGamepad UI; emülatör köprüsü PluviaApp.inputControlsView üstünden.
+    val phonePadInput = remember { app.gamenative.phonepad.PhonePadInput() }
     var isDisableMouseInput by remember(container.id) { mutableStateOf(container.isDisableMouseInput) }
     var isEditMode by remember { mutableStateOf(false) }
     var gameRoot by remember { mutableStateOf<View?>(null) }
@@ -661,6 +663,26 @@ fun XServerScreen(
     fun applyMouseCursorVisibility() {
         xServerView?.renderer?.setCursorVisible(shouldShowMouseCursor())
     }
+    // shortcut: PhonePad Fare/Stikler düğmesiyle paylaşılır (fare modu = imleç açık).
+    fun setMouseInputEnabled(enabled: Boolean): Boolean {
+        val newValue = !enabled
+        isDisableMouseInput = newValue
+        container.setDisableMouseInput(newValue)
+        container.saveData()
+        PluviaApp.touchpadView?.setTouchscreenMouseDisabled(newValue)
+        if (newValue) {
+            xServerView?.renderer?.setCursorVisible(false)
+        } else {
+            applyMouseCursorVisibility()
+        }
+        return true
+    }
+
+    // PhonePad'deki Fare düğmesiyle QuickMenu anahtarı aynı işi yapar.
+    fun toggleMouseInput(): Boolean {
+        return setMouseInputEnabled(isDisableMouseInput)
+    }
+
     val clickHighlightPoints = remember { mutableStateListOf<app.gamenative.ui.component.HighlightPoint>() }
     var debugGestureName by remember { mutableStateOf("") }
     var debugGestureKey by remember { mutableIntStateOf(0) }
@@ -972,6 +994,8 @@ fun XServerScreen(
     fun clearOverlayPauseState() {
         PluviaApp.isOverlayPaused = false
         PluviaApp.inputControlsView?.setGyroGameplayActive(true)
+        // Duraklatma sırasında yarım kalan dokunuş misafirde takılı kalmasın.
+        runCatching { phonePadInput.releaseAll() }
     }
 
     fun pauseForOverlayIfAllowed() {
@@ -983,6 +1007,8 @@ fun XServerScreen(
         // is still "held" when the guest is SIGSTOPped, the auto-repeat's next blocking ClientSocket.write to the
         // non-draining guest hangs the UI thread -> ANR (seen when opening the SC editor with a key still down).
         runCatching { xServerView?.getxServer()?.inputDeviceManager?.onGuestSuspended() }
+        // Misafir durmadan önce pad'i bırak: yarım dokunuş takılı kalmasın.
+        runCatching { phonePadInput.releaseAll() }
         PluviaApp.xEnvironment?.onPause()
         PluviaApp.isOverlayPaused = true
         PluviaApp.inputControlsView?.setGyroGameplayActive(false)
@@ -1359,19 +1385,7 @@ fun XServerScreen(
                 }
             }
 
-            QuickMenuAction.DISABLE_MOUSE -> {
-                val newValue = !isDisableMouseInput
-                isDisableMouseInput = newValue
-                container.setDisableMouseInput(newValue)
-                container.saveData()
-                PluviaApp.touchpadView?.setTouchscreenMouseDisabled(newValue)
-                if (newValue) {
-                    xServerView?.renderer?.setCursorVisible(false)
-                } else {
-                    applyMouseCursorVisibility()
-                }
-                true
-            }
+            QuickMenuAction.DISABLE_MOUSE -> toggleMouseInput()
 
             QuickMenuAction.EDIT_CONTROLS -> {
                 if (PrefManager.usageAnalyticsEnabled) PostHog.capture(event = "edit_controls_in_game")
@@ -1730,7 +1744,12 @@ fun XServerScreen(
             }
         } else {
             var handled = false
-            if (isGamepad) {
+            if (areControlsVisible && !isEditMode && !showQuickMenu && !showElementEditor && !keepPausedForEditor &&
+                (it.event.keyCode == KeyEvent.KEYCODE_VOLUME_UP || it.event.keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)
+            ) {
+                handled = phonePadInput.onKeyEvent(it.event)
+            }
+            if (!handled && isGamepad) {
                 val winHandler = xServerView!!.getxServer().winHandler
                 if (it.event.action == KeyEvent.ACTION_DOWN && it.event.repeatCount == 0 &&
                     ControllerManager.getInstance().noteGamepadButton(it.event.device.id)
@@ -3006,6 +3025,14 @@ fun XServerScreen(
         // Click highlight overlay (gesture overhaul)
         if (currentGestureConfig.showClickHighlight && clickHighlightPoints.isNotEmpty()) {
             app.gamenative.ui.component.ClickHighlightOverlay(points = clickHighlightPoints)
+        }
+
+        // PhonePad: eski overlay çizimini kapatıp (köprü nesnesi yaşar) kendi pad'i çiz.
+        LaunchedEffect(areControlsVisible, isEditMode) {
+            PluviaApp.inputControlsView?.setShowTouchscreenControls(isEditMode && areControlsVisible)
+        }
+        if (areControlsVisible && !isEditMode && !showQuickMenu && !showElementEditor && !keepPausedForEditor) {
+            app.gamenative.phonepad.PhonePadRoot(phonePadInput, onToggleMouse = { setMouseInputEnabled(it) })
         }
 
         // Debug gesture name overlay (gesture overhaul)

@@ -9,20 +9,16 @@
       android:translateY="21.06">
     <path
         android:pathData="M77.41,53.45L65.45,65.42L70.28,70.24H63.49V54.56L75.3,42.75L70.1,37.55H77.41V53.45Z"
-        android:fillColor="#ffffff"
-        android:fillAlpha="0.33"/>
+        android:fillColor="#ffffff"/>
     <path
         android:pathData="M65.46,32.91L75.3,42.75L58.78,59.27L48.94,49.43L65.46,32.91Z"
-        android:fillColor="#ffffff"
-        android:fillAlpha="0.66"/>
+        android:fillColor="#ffffff"/>
     <path
         android:pathData="M37.76,50.41H54.21V58.01H37.76V50.41Z"
-        android:fillColor="#ffffff"
-        android:fillAlpha="0.66"/>
+        android:fillColor="#ffffff"/>
     <path
         android:pathData="M81.98,48.89L91.82,58.74L75.3,75.26L65.45,65.42L81.98,48.89Z"
-        android:fillColor="#ffffff"
-        android:fillAlpha="0.66"/>
+        android:fillColor="#ffffff"/>
     <path
         android:pathData="M77.41,37.76C77.41,41.6 74.3,44.72 70.45,44.72C66.61,44.72 63.49,41.6 63.49,37.76C63.49,33.91 66.61,30.8 70.45,30.8C74.3,30.8 77.41,33.91 77.41,37.76Z"
         android:fillColor="#ffffff"/>
@@ -40,7 +36,7 @@
         android:fillColor="#ffffff"/>
     <path
         android:pathData="M57.8,54.21C57.8,56.31 56.05,58.01 53.89,58.01C51.74,58.01 49.99,56.31 49.99,54.21C49.99,52.11 51.74,50.41 53.89,50.41C56.05,50.41 57.8,52.11 57.8,54.21Z"
-        android:fillColor="#827FFB"/>
+        android:fillColor="#ffffff"/>
     <path
         android:pathData="M44.51,37.76C44.51,41.6 41.39,44.72 37.55,44.72C33.7,44.72 30.59,41.6 30.59,37.76C30.59,33.91 33.7,30.8 37.55,30.8C41.39,30.8 44.51,33.91 44.51,37.76Z"
         android:fillColor="#ffffff"/>

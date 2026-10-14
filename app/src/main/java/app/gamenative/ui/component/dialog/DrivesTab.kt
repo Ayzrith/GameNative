@@ -62,7 +62,7 @@ fun DrivesTabContent(state: ContainerConfigState) {
                                 content = {
                                     Icon(
                                         Icons.Filled.Delete,
-                                        contentDescription = "Delete drive",
+                                        contentDescription = "Sürücüyü sil",
                                         tint = MaterialTheme.colorScheme.error,
                                     )
                                 },
@@ -88,7 +88,7 @@ fun DrivesTabContent(state: ContainerConfigState) {
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.AddCircleOutline,
-                        contentDescription = "Add drive",
+                        contentDescription = "Sürücü ekle",
                     )
                 }
             },

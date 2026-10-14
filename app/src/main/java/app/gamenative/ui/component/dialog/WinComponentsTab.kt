@@ -19,7 +19,7 @@ fun WinComponentsTabContent(state: ContainerConfigState) {
             SettingsListDropdown(
                 colors = settingsTileColors(),
                 title = { Text(stringResource(id = compNameRes)) },
-                subtitle = { Text(if (compId.startsWith("direct")) "DirectX" else "General") },
+                subtitle = { Text(if (compId.startsWith("direct")) "DirectX" else "Genel") },
                 value = compValue,
                 items = state.winCompOpts,
                 onItemSelected = {

@@ -590,7 +590,7 @@ fun WineProtonManagerDialog(open: Boolean, onDismiss: () -> Unit) {
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Info,
-                            contentDescription = "Info",
+                            contentDescription = "Bilgi",
                             tint = MaterialTheme.colorScheme.primary
                         )
                         Column {
@@ -615,7 +615,7 @@ fun WineProtonManagerDialog(open: Boolean, onDismiss: () -> Unit) {
                         modifier = Modifier.padding(vertical = 8.dp)
                     ) {
                         Text(
-                            text = "Loading available Wine/Proton versions...",
+                            text = "Kullanılabilir Wine/Proton sürümleri yükleniyor...",
                             style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier.weight(1f)
                         )
@@ -632,7 +632,7 @@ fun WineProtonManagerDialog(open: Boolean, onDismiss: () -> Unit) {
                     )
                 } else if (wineProtonManifest.isNotEmpty()) {
                     Text(
-                        text = "Available online versions:",
+                        text = "Çevrimiçi kullanılabilir sürümler:",
                         style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier.padding(top = 8.dp, bottom = 4.dp)
                     )
@@ -646,7 +646,7 @@ fun WineProtonManagerDialog(open: Boolean, onDismiss: () -> Unit) {
                             value = selectedWineKey,
                             onValueChange = {},
                             readOnly = true,
-                            label = { Text("Select Wine/Proton version") },
+                            label = { Text("Wine/Proton sürümü seç") },
                             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded) },
                             modifier = Modifier.fillMaxWidth().menuAnchor(MenuAnchorType.PrimaryNotEditable)
                         )
@@ -679,9 +679,9 @@ fun WineProtonManagerDialog(open: Boolean, onDismiss: () -> Unit) {
                                 modifier = Modifier.weight(1f)
                             ) {
                                 when {
-                                    isDownloading -> Text("Downloading...")
-                                    isInstalling -> Text("Installing...")
-                                    else -> Text("Download & Install")
+                                    isDownloading -> Text("İndiriliyor...")
+                                    isInstalling -> Text("Kuruluyor...")
+                                    else -> Text("İndir ve Kur")
                                 }
                             }
                         }
@@ -693,7 +693,7 @@ fun WineProtonManagerDialog(open: Boolean, onDismiss: () -> Unit) {
                                     modifier = Modifier.fillMaxWidth()
                                 )
                                 Text(
-                                    text = "Downloading: ${(downloadProgress * 100).toInt()}%",
+                                    text = "İndiriliyor: ${(downloadProgress * 100).toInt()}%",
                                     style = MaterialTheme.typography.bodySmall,
                                     modifier = Modifier.padding(top = 4.dp)
                                 )

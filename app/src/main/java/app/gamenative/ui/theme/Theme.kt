@@ -115,7 +115,7 @@ private val LocalPluviaColors = staticCompositionLocalOf { DarkPluviaColors }
  */
 private val DarkColorScheme = darkColorScheme(
     primary = PluviaPrimary,
-    onPrimary = PluviaForeground,
+    onPrimary = PluviaBackground,
     primaryContainer = PluviaPrimary.copy(alpha = 0.2f),
     onPrimaryContainer = PluviaForeground,
 

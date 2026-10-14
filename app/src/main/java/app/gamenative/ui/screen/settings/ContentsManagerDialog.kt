@@ -314,7 +314,7 @@ fun ContentsManagerDialog(open: Boolean, onDismiss: () -> Unit) {
                                 ) {
                                     Icon(
                                         imageVector = Icons.Filled.Delete,
-                                        contentDescription = "Delete",
+                                        contentDescription = "Sil",
                                         tint = MaterialTheme.colorScheme.error
                                     )
                                 }

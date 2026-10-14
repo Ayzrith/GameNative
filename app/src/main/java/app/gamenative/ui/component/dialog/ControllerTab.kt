@@ -37,6 +37,7 @@ fun ControllerTabContent(state: ContainerConfigState, default: Boolean) {
             SettingsSwitch(
                 colors = settingsTileColorsAlt(),
                 title = { Text(text = stringResource(R.string.use_sdl_api)) },
+                subtitle = { Text("Kolları SDL üzerinden tanıt. Fiziksel kol kullanıyorsan açık kalsın.") },
                 state = config.sdlControllerAPI,
                 onCheckedChange = { state.config.value = config.copy(sdlControllerAPI = it) },
             )
@@ -44,24 +45,28 @@ fun ControllerTabContent(state: ContainerConfigState, default: Boolean) {
         SettingsSwitch(
             colors = settingsTileColorsAlt(),
             title = { Text(text = stringResource(R.string.use_steam_input)) },
+            subtitle = { Text("Steam'in kol desteğini açar. Steam oyunlarında kol çalışmazsa dene.") },
             state = config.useSteamInput,
             onCheckedChange = { state.config.value = config.copy(useSteamInput = it) },
         )
         SettingsSwitch(
             colors = settingsTileColorsAlt(),
             title = { Text(text = stringResource(R.string.enable_xinput_api)) },
+            subtitle = { Text("Xbox kol standardı. Ekrandaki pad bu yolla çalışır, hep açık tut.") },
             state = config.enableXInput,
             onCheckedChange = { state.config.value = config.copy(enableXInput = it) },
         )
         SettingsSwitch(
             colors = settingsTileColorsAlt(),
             title = { Text(text = stringResource(R.string.enable_directinput_api)) },
+            subtitle = { Text("Eski kol standardı. Eski oyunlar isterse aç.") },
             state = config.enableDInput,
             onCheckedChange = { state.config.value = config.copy(enableDInput = it) },
         )
         SettingsListDropdown(
             colors = settingsTileColors(),
             title = { Text(text = stringResource(R.string.directinput_mapper_type)) },
+            subtitle = { Text("Eski oyun kol eşleme biçimi. Bozuk tuş varsa diğerini dene.") },
             value = if (config.dinputMapperType == 1.toByte()) 0 else 1,
             items = listOf("Standard", "XInput Mapper"),
             onItemSelected = { index ->

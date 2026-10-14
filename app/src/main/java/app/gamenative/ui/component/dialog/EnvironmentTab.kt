@@ -55,7 +55,7 @@ fun EnvironmentTabContent(state: ContainerConfigState) {
                             state.config.value = config.copy(envVars = envVars.toString())
                         },
                         content = {
-                            Icon(Icons.Filled.Delete, contentDescription = "Delete variable")
+                            Icon(Icons.Filled.Delete, contentDescription = "Değişkeni sil")
                         },
                     )
                 },
@@ -74,7 +74,7 @@ fun EnvironmentTabContent(state: ContainerConfigState) {
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.AddCircleOutline,
-                        contentDescription = "Add environment variable",
+                        contentDescription = "Ortam değişkeni ekle",
                     )
                 }
             },
@@ -104,7 +104,7 @@ fun EnvironmentTabContent(state: ContainerConfigState) {
                                     content = {
                                         Icon(
                                             imageVector = Icons.AutoMirrored.Outlined.ViewList,
-                                            contentDescription = "List known variable names",
+                                            contentDescription = "Bilinen değişken adlarını listele",
                                         )
                                     },
                                 )
@@ -168,7 +168,7 @@ fun EnvironmentTabContent(state: ContainerConfigState) {
                                     IconButton(onClick = { suggestionsExpanded = true }) {
                                         Icon(
                                             imageVector = Icons.AutoMirrored.Outlined.ViewList,
-                                            contentDescription = "Presets",
+                                            contentDescription = "Hazır değerler",
                                         )
                                     }
                                     DropdownMenu(

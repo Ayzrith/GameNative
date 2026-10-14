@@ -20,6 +20,7 @@ fun WineTabContent(state: ContainerConfigState) {
         SettingsListDropdownSearchable(
             colors = settingsTileColors(),
             title = { Text(text = stringResource(R.string.renderer)) },
+            subtitle = { Text("Oyunun kendini tanıttığı ekran kartı adı. Değişiklik oyunu yanıltır, dokunmayın.") },
             value = state.gpuNameIndex.value,
             items = state.gpuCards.values.map { it.name },
             onItemSelected = {
@@ -35,6 +36,7 @@ fun WineTabContent(state: ContainerConfigState) {
         SettingsListDropdownSearchable(
             colors = settingsTileColors(),
             title = { Text(text = stringResource(R.string.gpu_name)) },
+            subtitle = { Text("Sürücünün kullanacağı ekran kartı modeli.") },
             value = state.gpuNameIndex.value,
             items = state.gpuCards.values.map { it.name },
             onItemSelected = {
@@ -45,6 +47,7 @@ fun WineTabContent(state: ContainerConfigState) {
         SettingsListDropdown(
             colors = settingsTileColors(),
             title = { Text(text = stringResource(R.string.offscreen_rendering_mode)) },
+            subtitle = { Text("Ekran dışı çizim yöntemi. Bozulma varsa fbo dene.") },
             value = state.renderingModeIndex.value,
             items = state.renderingModes,
             onItemSelected = {
@@ -55,6 +58,7 @@ fun WineTabContent(state: ContainerConfigState) {
         SettingsListDropdown(
             colors = settingsTileColors(),
             title = { Text(text = stringResource(R.string.video_memory_size)) },
+            subtitle = { Text("Oyuna gösterilen sahte ekran kartı belleği. Yüksek değer her zaman hızlı demek değil.") },
             value = state.videoMemIndex.value,
             items = state.videoMemSizes,
             onItemSelected = {
@@ -65,18 +69,21 @@ fun WineTabContent(state: ContainerConfigState) {
         SettingsSwitch(
             colors = settingsTileColorsAlt(),
             title = { Text(text = stringResource(R.string.enable_csmt)) },
+            subtitle = { Text("Çok iş parçacıklı komut akışı. Çoğu oyunda açık kalsın, grafik bozulursa kapat.") },
             state = config.csmt,
             onCheckedChange = { state.config.value = config.copy(csmt = it) },
         )
         SettingsSwitch(
             colors = settingsTileColorsAlt(),
             title = { Text(text = stringResource(R.string.enable_strict_shader_math)) },
+            subtitle = { Text("Katı gölgelendirici matematiği. Yavaşlatır, sadece grafik hatası varsa aç.") },
             state = config.strictShaderMath,
             onCheckedChange = { state.config.value = config.copy(strictShaderMath = it) },
         )
         SettingsListDropdown(
             colors = settingsTileColors(),
             title = { Text(text = stringResource(R.string.mouse_warp_override)) },
+            subtitle = { Text("Oyun faresi ekran kenarına dayanınca imleç davransın mı. Nişan alırken imleç kaçıyorsa değiştir.") },
             value = state.mouseWarpIndex.value,
             items = state.mouseWarps,
             onItemSelected = {

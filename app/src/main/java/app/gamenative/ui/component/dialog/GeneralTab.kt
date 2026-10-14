@@ -254,6 +254,7 @@ fun GeneralTabContent(
                 SettingsListDropdown(
                     colors = settingsTileColors(),
                     title = { Text(text = stringResource(R.string.wine_version)) },
+                    subtitle = { Text("Windows uyumluluk katmanı sürümü. Oyun açılmıyorsa başka sürüm dene.") },
                     value = wineIndex,
                     items = state.bionicWineOptions.labels,
                     itemMuted = state.bionicWineOptions.muted,

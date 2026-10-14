@@ -111,7 +111,7 @@ fun GraphicsTabContent(state: ContainerConfigState, default: Boolean = false) {
                 title = { Text(text = stringResource(R.string.exposed_vulkan_extensions)) },
                 values = state.exposedExtIndices.value,
                 items = state.gpuExtensions,
-                fallbackDisplay = "all",
+                fallbackDisplay = "tümü",
                 onItemSelected = { idx ->
                     val current = state.exposedExtIndices.value
                     state.exposedExtIndices.value =
@@ -348,7 +348,7 @@ fun GraphicsTabContent(state: ContainerConfigState, default: Boolean = false) {
                         title = { Text(text = stringResource(R.string.exposed_vulkan_extensions)) },
                         values = state.exposedExtIndices.value,
                         items = state.gpuExtensions,
-                        fallbackDisplay = "all",
+                        fallbackDisplay = "tümü",
                         onItemSelected = { idx ->
                             val current = state.exposedExtIndices.value
                             state.exposedExtIndices.value =
@@ -422,6 +422,7 @@ private fun DxWrapperSection(state: ContainerConfigState) {
     SettingsListDropdown(
         colors = settingsTileColorsAlt(),
         title = { Text(text = stringResource(R.string.display_renderer)) },
+        subtitle = { Text("Görüntüyü ekrana taşıyan motor. Bozulma varsa değiştir.") },
         value = state.displayRendererIndex.value,
         items = state.displayRenderers,
         onItemSelected = {
@@ -444,6 +445,7 @@ private fun DxWrapperSection(state: ContainerConfigState) {
     SettingsListDropdown(
         colors = settingsTileColors(),
         title = { Text(text = stringResource(R.string.dx_wrapper)) },
+        subtitle = { Text("DirectX çevirmeni. DXVK (DirectX 9-11), VKD3D (DirectX 12). Yanlış seçimde oyun siyah ekran verir.") },
         value = state.dxWrapperIndex.value,
         items = state.dxWrappers,
         onItemSelected = {
@@ -460,6 +462,7 @@ private fun DxWrapperSection(state: ContainerConfigState) {
         SettingsListDropdown(
             colors = settingsTileColors(),
             title = { Text(text = stringResource(R.string.dxvk_version)) },
+            subtitle = { Text("DXVK sürümü. async/gplasync ibareli olanlar takılmayı azaltır.") },
             value = state.dxvkVersionIndex.value.coerceIn(0, (items.size - 1).coerceAtLeast(0)),
             items = items,
             itemMuted = itemMuted,
@@ -500,7 +503,7 @@ private fun DxWrapperSection(state: ContainerConfigState) {
     run {
         val isVKD3D = StringUtils.parseIdentifier(state.dxWrappers.getOrNull(state.dxWrapperIndex.value).orEmpty()) == "vkd3d"
         if (isVKD3D) {
-            val label = "VKD3D Version"
+            val label = "VKD3D Sürümü"
             val availableVersions = if (state.isBionicVariant) state.vkd3dOptions.labels else state.vkd3dVersionsBase
             val availableIds = if (state.isBionicVariant) state.vkd3dOptions.ids else state.vkd3dVersionsBase
             val availableMuted = if (state.isBionicVariant) state.vkd3dOptions.muted else null
@@ -511,6 +514,7 @@ private fun DxWrapperSection(state: ContainerConfigState) {
             SettingsListDropdown(
                 colors = settingsTileColors(),
                 title = { Text(text = label) },
+                subtitle = { Text("VKD3D sürümü. DirectX 12 oyunlar içindir.") },
                 value = selectedIndex,
                 items = availableVersions,
                 itemMuted = availableMuted,
@@ -542,6 +546,7 @@ private fun DxWrapperSection(state: ContainerConfigState) {
             SettingsListDropdown(
                 colors = settingsTileColors(),
                 title = { Text(text = stringResource(R.string.vkd3d_feature_level)) },
+                subtitle = { Text("Oyunun istediği DirectX 12 seviyesi. Oyun belirtir, genelde 12_1.") },
                 value = currentLevelIndex,
                 items = featureLevels,
                 onItemSelected = {

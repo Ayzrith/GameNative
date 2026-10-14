@@ -1945,7 +1945,7 @@ fun PluviaMain(
                         EpicService.hasStoredCredentials(context) ||
                         AmazonService.hasStoredCredentials(context) ->
                         PluviaScreen.Home.route + "?offline=true"
-                    else -> PluviaScreen.LoginUser.route
+                    else -> PluviaScreen.Home.route + "?offline=true" // hesap zorlaması yok: direkt çevrimdışı giriş
                 }
             }
 

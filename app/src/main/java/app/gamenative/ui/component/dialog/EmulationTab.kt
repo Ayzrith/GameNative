@@ -27,6 +27,7 @@ fun EmulationTabContent(state: ContainerConfigState) {
                     SettingsListDropdown(
                         colors = settingsTileColors(),
                         title = { Text(text = stringResource(R.string.fexcore_version)) },
+                        subtitle = { Text("ARM64EC oyunlarda x86 kodunu çalıştıran çevirmen. Değiştirmen gerekmez.") },
                         value = fexcoreIndex,
                         items = state.fexcoreOptions.labels,
                         itemMuted = state.fexcoreOptions.muted,
@@ -52,6 +53,7 @@ fun EmulationTabContent(state: ContainerConfigState) {
             SettingsListDropdown(
                 colors = settingsTileColors(),
                 title = { Text(text = stringResource(R.string.emulator_64bit)) },
+                subtitle = { Text("64-bit oyun motoru. Wine sürümüne göre otomatik seçilir.") },
                 value = state.emulator64Index.value,
                 items = state.emulatorEntries,
                 enabled = false,
@@ -64,6 +66,7 @@ fun EmulationTabContent(state: ContainerConfigState) {
             SettingsListDropdown(
                 colors = settingsTileColors(),
                 title = { Text(text = stringResource(R.string.emulator_32bit)) },
+                subtitle = { Text("32-bit oyun motoru. Wine sürümüne göre otomatik seçilir.") },
                 value = state.emulator32Index.value,
                 items = state.emulatorEntries,
                 enabled = when {
@@ -103,6 +106,7 @@ fun EmulationTabContent(state: ContainerConfigState) {
         SettingsListDropdown(
             colors = settingsTileColors(),
             title = { Text(text = stringResource(R.string.box64_version)) },
+            subtitle = { Text("Bilgisayar oyun kodunu telefona çeviren katman. Oyun açılmıyorsa başka sürüm dene.") },
             value = box64Index,
             items = box64OptionList.labels,
             itemMuted = box64OptionList.muted,
@@ -127,6 +131,7 @@ fun EmulationTabContent(state: ContainerConfigState) {
         SettingsListDropdown(
             colors = settingsTileColors(),
             title = { Text(text = stringResource(R.string.box64_preset)) },
+            subtitle = { Text("Hazır hız ayarı. Takılma varsa Compatibility, hız istiyorsan Performance.") },
             value = state.box64Presets.indexOfFirst { it.id == config.box64Preset }.coerceAtLeast(0),
             items = state.box64Presets.map { it.name },
             onItemSelected = {
@@ -138,6 +143,7 @@ fun EmulationTabContent(state: ContainerConfigState) {
             SettingsListDropdown(
                 colors = settingsTileColors(),
                 title = { Text(text = stringResource(R.string.fexcore_preset)) },
+                subtitle = { Text("FEX çevirmeni için hazır hız ayarı.") },
                 value = state.fexcorePresets.indexOfFirst { it.id == config.fexcorePreset }.coerceAtLeast(0),
                 items = state.fexcorePresets.map { it.name },
                 onItemSelected = {

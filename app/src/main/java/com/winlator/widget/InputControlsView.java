@@ -300,11 +300,6 @@ public class InputControlsView extends View {
                                 rightJoystickCurrentX, rightJoystickCurrentY, sizeMultiplier);
         }
 
-        // Draw container shooter mode toggle button
-        if (containerShooterMode && isRuntimeToggleVisible() && !editMode) {
-            drawContainerShooterToggle(canvas);
-        }
-
         super.onDraw(canvas);
     }
 
@@ -962,6 +957,85 @@ public class InputControlsView extends View {
         }
     }
 
+    // shortcut: PhonePad overlay köprüsü (GameNative'te sanal pad = PhoneGamepad UI).
+    // Butonlar handleInputEvent yolunu kullanır, analog+tetik burada tek commit'te gider.
+    // Guide/Home ve fazlası Binding'de yok: NONE eşlenir (basış düşer).
+    // shortcut: teşhis satırı için (v1.3.4 sonrası kaldırılacak).
+    public String phonePadDebug() {
+        if (profile == null) return "profil yok";
+        if (xServer == null) return "xserver yok";
+        try {
+            if (profile.getGamepadState() == null) return "state yok";
+        } catch (Exception e) {
+            return "state hata";
+        }
+        return "hazir";
+    }
+
+    public void phonePadButton(Binding binding, boolean pressed) {
+        if (binding == null || binding == Binding.NONE) return;
+        handleInputEvent(binding, pressed);
+        commitGamepadStateIfNeeded(binding);
+    }
+
+    // shortcut: PhonePad fare modu; TouchpadView ile aynı yolu kullanır (stok Enable Mouse karşılığı).
+    public void phonePadMouseMove(int dx, int dy) {
+        if (xServer == null) return;
+        if (xServer.isRelativeMouseMovement()) {
+            WinHandler winHandler = xServer.getWinHandler();
+            if (winHandler != null) winHandler.mouseEvent(MouseEventFlags.MOVE, dx, dy, 0);
+        } else {
+            xServer.injectPointerMoveDelta(dx, dy);
+        }
+    }
+
+    public void phonePadMouseClick(int button) {
+        if (xServer == null) return;
+        com.winlator.xserver.Pointer.Button b =
+                button == 1 ? com.winlator.xserver.Pointer.Button.BUTTON_RIGHT
+                            : com.winlator.xserver.Pointer.Button.BUTTON_LEFT;
+        xServer.injectPointerButtonPress(b);
+        xServer.injectPointerButtonRelease(b);
+    }
+
+    public synchronized void setPhonePadAnalog(float lx, float ly, float rx, float ry, float lt, float rt) {
+        if (profile == null) return;
+        GamepadState state = profile.getGamepadState();
+        boolean changed = state.updateThumbstick(false, lx, ly) | state.updateThumbstick(true, rx, ry);
+        if (state.triggerL != lt) { state.triggerL = lt; changed = true; }
+        if (state.triggerR != rt) { state.triggerR = rt; changed = true; }
+        state.setPressed(ExternalController.IDX_BUTTON_L2, lt > 0.1f);
+        state.setPressed(ExternalController.IDX_BUTTON_R2, rt > 0.1f);
+        if (xServer == null) return;
+        WinHandler winHandler = xServer.getWinHandler();
+        if (winHandler != null) {
+            ExternalController controller = winHandler.getCurrentController();
+            if (controller != null) controller.state.copy(state);
+            if (changed) {
+                winHandler.sendGamepadState();
+                winHandler.sendVirtualGamepadState(state);
+            }
+        }
+    }
+
+    public synchronized void phonePadReleaseAll() {
+        if (profile == null) return;
+        GamepadState state = profile.getGamepadState();
+        state.buttons = 0;
+        state.thumbLX = 0f; state.thumbLY = 0f;
+        state.thumbRX = 0f; state.thumbRY = 0f;
+        state.triggerL = 0f; state.triggerR = 0f;
+        for (int i = 0; i < state.dpad.length; i++) state.dpad[i] = false;
+        if (xServer == null) return;
+        WinHandler winHandler = xServer.getWinHandler();
+        if (winHandler != null) {
+            ExternalController controller = winHandler.getCurrentController();
+            if (controller != null) controller.state.copy(state);
+            winHandler.sendGamepadState();
+            winHandler.sendVirtualGamepadState(state);
+        }
+    }
+
     private void releaseShooterSprint() {
         cancelPendingShooterSprintTap();
         if (shooterSprintActive) {
@@ -1269,22 +1343,7 @@ public class InputControlsView extends View {
     private boolean handleShooterTouchDown(int pointerId, float x, float y, boolean allowButtonLookThrough) {
         boolean handled = false;
 
-        // Check container shooter mode toggle button first
-        if (containerShooterMode && isRuntimeToggleVisible()) {
-            android.graphics.RectF toggleRect = getToggleButtonRect();
-            if (toggleRect.contains(x, y)) {
-                cancelTouchRouting();
-                containerShooterModeRuntime = !containerShooterModeRuntime;
-                if (!containerShooterModeRuntime) {
-                    releaseAllShooterInputs();
-                    commitGamepadState();
-                }
-                applyShooterMouseInputMode();
-                performHapticFeedback(android.view.HapticFeedbackConstants.VIRTUAL_KEY);
-                invalidate();
-                return true;
-            }
-        }
+        // (toggle düğmesi PhonePad'e taşındı; stok çizim/touch kapalı)
 
         // If runtime is off (and no SHOOTER_MODE element active), only the toggle button above should handle
         if (!shooterModeActive && !containerShooterModeRuntime) {
