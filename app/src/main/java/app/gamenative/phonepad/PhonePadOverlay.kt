@@ -75,7 +75,7 @@ fun PhonePadRoot(input: PhonePadInput, onToggleMouse: (Boolean) -> Unit = {}) {
     var selectMode by remember { mutableStateOf(false) }
     var rpad by remember { mutableStateOf("stick") }
     var lpad by remember { mutableStateOf("stick") }
-    var dpadMerged by remember { mutableStateOf(false) }
+    var dpadMerged by remember { mutableStateOf(true) }
     var showDesign by remember { mutableStateOf(false) }
     var designHidden by remember { mutableStateOf(false) }
     var panelLeft by remember { mutableStateOf(false) }
@@ -86,7 +86,7 @@ fun PhonePadRoot(input: PhonePadInput, onToggleMouse: (Boolean) -> Unit = {}) {
         input.volUpBit = xboxNameToBit(prettyXboxName(p[K_VOL_UP] ?: DEF_VOL_UP))
         input.volDownBit = xboxNameToBit(prettyXboxName(p[K_VOL_DOWN] ?: DEF_VOL_DOWN))
         alpha = p[K_ALPHA] ?: 0.92f
-        dpadMerged = p[K_DPAD_MERGED] ?: false
+        dpadMerged = p[K_DPAD_MERGED] ?: true
         p[K_LAYOUT]?.let { js ->
             try {
                 val parsed = parseLayoutJson(js)

@@ -120,11 +120,14 @@ class PluviaApp : SplitCompatApplication() {
             Timber.e(e, "[PluviaApp]: Failed to clear temporary config overrides")
         }
 
-        // Initialize PostHog Analytics
-        val postHogConfig = PostHogAndroidConfig(
-            apiKey = BuildConfig.POSTHOG_API_KEY,
-            host = BuildConfig.POSTHOG_HOST,
-        ).apply {
+        // PostHog açılışta internet yer (flush/flag yoklaması). Kapalıysa SDK hiç kurulmaz;
+        // kurulmadan yapılan capture/register çağrıları SDK içinde no-op'tur, crash olmaz.
+        if (PrefManager.usageAnalyticsEnabled) {
+            // Initialize PostHog Analytics
+            val postHogConfig = PostHogAndroidConfig(
+                apiKey = BuildConfig.POSTHOG_API_KEY,
+                host = BuildConfig.POSTHOG_HOST,
+            ).apply {
             /* turn every event into an identified one */
             personProfiles = PersonProfiles.ALWAYS
             propertiesSanitizer = PostHogPropertiesSanitizer { properties ->
@@ -143,12 +146,11 @@ class PluviaApp : SplitCompatApplication() {
                 properties.filterKeys { it.startsWith("$") }.toMutableMap().apply { put("url", trimmed) }
             }
         }
-        PostHogAndroid.setup(this, postHogConfig)
-        com.posthog.PostHog.register("build_flavor", BuildConfig.FLAVOR)
-        DeviceInfo.registerSuperProperties(this)
-        Thread({ DeviceInfo.registerGpuSuperProperties(applicationContext) }, "device-info").apply { isDaemon = true }.start()
+            PostHogAndroid.setup(this, postHogConfig)
+            com.posthog.PostHog.register("build_flavor", BuildConfig.FLAVOR)
+            DeviceInfo.registerSuperProperties(this)
+            Thread({ DeviceInfo.registerGpuSuperProperties(applicationContext) }, "device-info").apply { isDaemon = true }.start()
 
-        if (PrefManager.usageAnalyticsEnabled) {
             com.posthog.PostHog.capture(
                 event = "\$set",
                 properties = mapOf(
