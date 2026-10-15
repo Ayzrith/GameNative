@@ -457,6 +457,41 @@ class CommunityConfigServiceTest {
     }
 
     @Test
+    fun gameQueryFallbacks_stripDisplayDecorationsButNeverAnotherGame() {
+        assertEquals(listOf("Terraria:", "Terraria"), communityGameQueryFallbacks("Terraria:"))
+        assertEquals(listOf("Elden Ring (Steam)", "Elden Ring"), communityGameQueryFallbacks("Elden Ring (Steam)"))
+        assertEquals(
+            listOf("Game - Complete Edition", "Game"),
+            communityGameQueryFallbacks("Game - Complete Edition"),
+        )
+        assertEquals(listOf("The Witcher 3: Wild Hunt"), communityGameQueryFallbacks("The Witcher 3: Wild Hunt"))
+        assertEquals(listOf("ELDEN RING DELUXE"), communityGameQueryFallbacks("ELDEN RING DELUXE"))
+        assertTrue(communityGameQueryFallbacks("   ").isEmpty())
+    }
+
+    @Test
+    fun findGame_retriesWithCleanedNameWhenDecoratedSearchMisses() = runBlocking {
+        server.dispatcher = object : Dispatcher() {
+            override fun dispatch(request: RecordedRequest): MockResponse {
+                val query = request.requestUrl?.queryParameter("q").orEmpty()
+                val body = if (query == "Terraria") {
+                    """{ "games": [{ "id": 668, "name": "Terraria" }] }"""
+                } else {
+                    """{ "games": [] }"""
+                }
+                return MockResponse().setResponseCode(200).setBody(body)
+            }
+        }
+
+        val found = service.findGame("Terraria:")
+        assertEquals(668, found?.id)
+        assertEquals(2, server.requestCount)
+
+        val missing = service.findGame("Zortlak Oyunu 12345")
+        assertNull(missing)
+    }
+
+    @Test
     fun gpuMatcher_normalizesKnownVendorFormattingAndFallsBackSafely() {
         assertEquals("adreno:730", canonicalCommunityGpu("Qualcomm Adreno (TM) 730"))
         assertEquals("arm:g715", canonicalCommunityGpu("Immortalis-G715 MC11"))

@@ -238,7 +238,15 @@ class CommunityConfigService internal constructor(
     }
 
     suspend fun findGame(query: String): CommunityGame? {
-        return selectCommunityGame(query, searchGames(query))
+        // Library display names sometimes carry decorations the server does not know
+        // (trailing colon, " (Store)" suffix, " - Edition" suffix) and the server search
+        // is literal: "Terraria:" returns nothing while "Terraria" matches. Retry with
+        // progressively cleaned queries, but still require an exact normalized match so
+        // a different game or edition is never mistaken for the requested one.
+        for (candidate in communityGameQueryFallbacks(query)) {
+            selectCommunityGame(candidate, searchGames(candidate))?.let { return it }
+        }
+        return null
     }
 
     suspend fun findDevices(
@@ -677,6 +685,27 @@ internal fun selectCommunityGame(query: String, games: List<CommunityGame>): Com
     if (games.isEmpty()) return null
     val normalizedQuery = normalizeCommunityGameName(query)
     return games.firstOrNull { normalizeCommunityGameName(it.name) == normalizedQuery }
+}
+
+/** Display-name cleanups retried by [CommunityConfigService.findGame], most-decorated first. */
+internal fun communityGameQueryFallbacks(query: String): List<String> {
+    val base = query.trim().replace(Regex("\\s+"), " ")
+    if (base.isEmpty()) return emptyList()
+    val fallbacks = LinkedHashSet<String>()
+    var current = base
+    fallbacks.add(current)
+    repeat(3) {
+        val next = stripCommunityGameSuffix(current)
+        if (next.isEmpty() || !fallbacks.add(next)) return@repeat
+        current = next
+    }
+    return fallbacks.toList()
+}
+
+private fun stripCommunityGameSuffix(value: String): String {
+    var stripped = value.replace(Regex("\\s*\\([^()]*\\)\\s*$"), "").trim()
+    stripped = stripped.replace(Regex("\\s+[-\u2013\u2014]\\s+[^-\u2013\u2014]+$"), "").trim()
+    return stripped.trimEnd(':', ';', ',', '-', '\u2013', '\u2014').trim().replace(Regex("\\s+"), " ")
 }
 
 internal fun communityDeviceQuery(manufacturer: String, model: String): String {
