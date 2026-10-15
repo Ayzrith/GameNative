@@ -69,7 +69,14 @@ object CommunityCompatibilityClassifier {
     fun fromCompatibilityResponse(
         response: GameCompatibilityService.GameCompatibilityResponse,
     ): CommunityCompatibilitySummary {
-        val tierName = response.tier
+        // The server names one tier, but "all"/missing picks used to discard the hardware slices
+        // entirely and report unknown. Prefer the named tier when usable; otherwise fall back to
+        // the hardware slice with the most sessions so existing evidence is shown.
+        val hardwareTiers = listOf("model", "soc", "gpu", "family")
+        val tierName = response.tier?.takeIf { it in hardwareTiers && response.tiers[it]?.hasHardwareKey == true }
+            ?: response.tier?.takeIf { it in hardwareTiers }
+            ?: hardwareTiers.maxByOrNull { response.tiers[it]?.sessions ?: 0 }
+                ?.takeIf { (response.tiers[it]?.sessions ?: 0) > 0 }
         val metrics = tierName?.let(response.tiers::get)
         val state = response.state?.trim()?.lowercase()
         val evidenceTier = when (tierName) {

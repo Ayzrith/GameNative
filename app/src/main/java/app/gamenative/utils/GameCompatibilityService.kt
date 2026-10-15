@@ -140,8 +140,12 @@ object GameCompatibilityService {
         }
         // Unwrapped state/tier responses are supported. Old run-only responses cannot establish
         // a hardware-specific verdict: skip them and retain last-known evidence instead.
+        // Server keys sometimes differ in case from the library display name; fall back to a
+        // case-insensitive match so a known game is not silently reported as unknown.
         return requestedGameNames.mapNotNull { gameName ->
-            val gameData = results.optJSONObject(gameName) ?: return@mapNotNull null
+            val gameData = results.optJSONObject(gameName)
+                ?: findKeyIgnoringCase(results, gameName)?.let { results.optJSONObject(it) }
+                ?: return@mapNotNull null
             val state = gameData.optNullableString("state") ?: return@mapNotNull null
             gameName to GameCompatibilityResponse(
                 gameName = gameName,
@@ -174,6 +178,15 @@ object GameCompatibilityService {
                 )
             }
         }
+    }
+
+    private fun findKeyIgnoringCase(obj: JSONObject, name: String): String? {
+        val keys = obj.keys()
+        while (keys.hasNext()) {
+            val key = keys.next()
+            if (key.equals(name, ignoreCase = true)) return key
+        }
+        return null
     }
 
     private fun JSONObject.optNullableString(name: String): String? =

@@ -73,6 +73,19 @@ class GameCompatibilityServiceTest {
         )
     }
 
+    @Test fun gameNameMatchesIgnoringCase() {
+        val parsed = GameCompatibilityService.parseCompatibilityResponse(
+            """{"results":{"TERRARIA":{"state":"May Work","tier":"gpu","tiers":{"gpu":{"key":"Mali","sessions":5,"playable":2}}}}}""",
+            listOf("Terraria"),
+        )
+        val game = parsed.getValue("Terraria")
+        assertEquals("May Work", game.state)
+        assertEquals(
+            CommunityCompatibilityVerdict.MAY_WORK,
+            CommunityCompatibilityClassifier.fromCompatibilityResponse(game).verdict,
+        )
+    }
+
     @Test
     fun missingRequestedEntryIsNotInventedAsUntested() {
         val parsed = GameCompatibilityService.parseCompatibilityResponse(

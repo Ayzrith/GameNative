@@ -137,6 +137,22 @@ class CommunityCompatibilityClassifierTest {
         }
     }
 
+    @Test fun allTierFallsBackToBestHardwareSliceInsteadOfUnknown() {
+        val result = CommunityCompatibilityClassifier.fromCompatibilityResponse(
+            GameCompatibilityResponse(
+                gameName = "Example", state = "May Work", tier = "all",
+                tiers = mapOf(
+                    "model" to metrics().copy(key = "samsung SM-A245F", sessions = 2, playable = 0),
+                    "all" to metrics().copy(key = "", sessions = 17846, playable = 6491, medianFps = 36.0),
+                ),
+            ),
+        )
+        assertEquals(CommunityCompatibilityVerdict.MAY_WORK, result.verdict)
+        assertEquals(CommunityEvidenceTier.SAME_DEVICE, result.evidenceTier)
+        assertEquals(2, result.sessionCount)
+        assertEquals(CommunityVerdictCaution.NONE, result.scopeCaution)
+    }
+
     @Test fun missingDecidingTierCannotClaimWorks() {
         val result = CommunityCompatibilityClassifier.fromCompatibilityResponse(response("Works", "model").copy(tiers = emptyMap()))
         assertEquals(CommunityCompatibilityVerdict.UNKNOWN, result.verdict)
