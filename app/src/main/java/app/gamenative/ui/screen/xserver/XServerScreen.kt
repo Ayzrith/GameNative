@@ -5299,6 +5299,7 @@ private fun exit(
     }.getOrElse { emptyMap() } + runCatching {
         GameCompatibilityService.badgeProperties(ContainerUtils.resolveGameName(appId))
     }.getOrElse { emptyMap() }
+    runCatching { PostHog.optIn() }
     PostHog.capture(
         event = "game_exited",
         properties = exitProperties,

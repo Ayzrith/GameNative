@@ -358,6 +358,9 @@ private fun trackGameLaunched(appId: String) {
             "play_integrity_available" to PrefManager.playIntegrityAvailable,
         ) + attribution,
     )
+    // Oyun sırasında veri yenmesin: kuyruğu boşalt, SDK'yı sustur. Çıkışta optIn ile açılır.
+    runCatching { PostHog.flush() }
+    runCatching { PostHog.optOut() }
 }
 
 private fun CoroutineScope.markAppliedReported(context: Context, state: DebugReportDialogState) {

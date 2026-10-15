@@ -238,7 +238,7 @@ object BootAdRepository {
      */
     fun prefetchVideos(context: Context, ads: List<BootAdItem>) {
         val dir = File(context.cacheDir, VIDEO_DIR)
-        val videoAds = ads.filter { it.template == TEMPLATE_VIDEO_CARD && it.videoUrl.isNotEmpty() }
+        val videoAds = ads.filter { it.template == TEMPLATE_VIDEO_CARD && it.videoUrl.isNotEmpty() && !it.sponsored }
         val keep = videoAds.map { "${it.campaignId}.mp4" }.toSet()
         dir.listFiles()?.forEach { if (it.name !in keep) it.delete() }
 

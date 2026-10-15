@@ -403,7 +403,7 @@ class MainViewModel @Inject constructor(
             val ad = if (reuse || dismissed) {
                 held
             } else {
-                BootAdRepository.pickBootCard()?.also {
+                BootAdRepository.pickBootCard()?.takeUnless { it.sponsored }?.also {
                     bootAdShownAtMs = System.currentTimeMillis()
                     bootAdDwellReported = false
                     BootAdView.begin(it)

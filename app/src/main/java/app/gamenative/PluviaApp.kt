@@ -147,6 +147,8 @@ class PluviaApp : SplitCompatApplication() {
             }
         }
             PostHogAndroid.setup(this, postHogConfig)
+            // optOut kalıcıdır; önceki oturum oyunda çöktüyse açılışta geri aç.
+            runCatching { com.posthog.PostHog.optIn() }
             com.posthog.PostHog.register("build_flavor", BuildConfig.FLAVOR)
             DeviceInfo.registerSuperProperties(this)
             Thread({ DeviceInfo.registerGpuSuperProperties(applicationContext) }, "device-info").apply { isDaemon = true }.start()

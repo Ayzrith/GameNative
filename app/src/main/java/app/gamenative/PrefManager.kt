@@ -1440,7 +1440,7 @@ object PrefManager {
 
     private val BOOT_SCREEN_ADS_ENABLED = booleanPreferencesKey("boot_screen_ads_enabled")
     var bootScreenAdsEnabled: Boolean
-        get() = getPref(BOOT_SCREEN_ADS_ENABLED, true)
+        get() = getPref(BOOT_SCREEN_ADS_ENABLED, false)
         set(value) {
             setPref(BOOT_SCREEN_ADS_ENABLED, value)
         }
@@ -1815,7 +1815,7 @@ object PrefManager {
 
     private val USAGE_ANALYTICS_ENABLED = booleanPreferencesKey("usage_analytics_enabled")
     var usageAnalyticsEnabled: Boolean
-        get() = getPref(USAGE_ANALYTICS_ENABLED, false)
+        get() = getPref(USAGE_ANALYTICS_ENABLED, true)
         set(value) { setPref(USAGE_ANALYTICS_ENABLED, value) }
 
     private val NEXUS_LAST_PLACEMENT_JSON = stringPreferencesKey("nexus_last_placement_json")
