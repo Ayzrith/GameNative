@@ -464,8 +464,15 @@ class CommunityConfigServiceTest {
             listOf("Game - Complete Edition", "Game"),
             communityGameQueryFallbacks("Game - Complete Edition"),
         )
-        assertEquals(listOf("The Witcher 3: Wild Hunt"), communityGameQueryFallbacks("The Witcher 3: Wild Hunt"))
-        assertEquals(listOf("ELDEN RING DELUXE"), communityGameQueryFallbacks("ELDEN RING DELUXE"))
+        assertEquals(
+            listOf("The Witcher 3: Wild Hunt", "The Witcher 3: Wild", "The Witcher 3:", "The Witcher"),
+            communityGameQueryFallbacks("The Witcher 3: Wild Hunt"),
+        )
+        assertEquals(
+            listOf("Terraria 1.4.4.9", "Terraria"),
+            communityGameQueryFallbacks("Terraria 1.4.4.9"),
+        )
+        assertEquals(listOf("ELDEN RING DELUXE", "ELDEN RING"), communityGameQueryFallbacks("ELDEN RING DELUXE"))
         assertTrue(communityGameQueryFallbacks("   ").isEmpty())
     }
 

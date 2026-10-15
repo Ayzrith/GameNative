@@ -694,10 +694,25 @@ internal fun communityGameQueryFallbacks(query: String): List<String> {
     val fallbacks = LinkedHashSet<String>()
     var current = base
     fallbacks.add(current)
+    // Peel trailing decorations (" (Store)", " - Edition", trailing colon) one layer at a time.
     repeat(3) {
         val next = stripCommunityGameSuffix(current)
         if (next.isEmpty() || !fallbacks.add(next)) return@repeat
         current = next
+    }
+    // Lastly drop trailing words ("Terraria 1.4.4.9" -> "Terraria"). A trailing word is only
+    // dropped when it looks like a version/tag (contains a digit) or words remain afterwards,
+    // so "Elden Ring" never degrades to "Elden". Every candidate still needs an exact
+    // normalized match, so shorter queries can never match a different game, only the same
+    // title without its version/tag tail.
+    var shortened = current
+    while (shortened.length >= 3) {
+        val next = shortened.substringBeforeLast(' ', "").trim()
+        if (next.length < 3) break
+        val dropped = shortened.substring(next.length).trim()
+        if (!next.contains(' ') && dropped.none { it.isDigit() }) break
+        if (!fallbacks.add(next)) break
+        shortened = next
     }
     return fallbacks.toList()
 }
